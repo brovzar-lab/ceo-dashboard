@@ -1,0 +1,149 @@
+export type Bucket = 'now' | 'next' | 'orbit'
+
+export type TaskSource = 'manual' | 'morning-brief' | 'ai-suggested' | 'email' | 'meeting'
+
+export interface Task {
+  id: string
+  title: string
+  bucket: Bucket
+  done: boolean
+  doneAt?: string
+  createdAt: string
+  updatedAt: string
+  source: TaskSource
+  notes?: string
+  linkedSkill?: string
+  linkedEmailId?: string
+  linkedMeetingId?: string
+  dueDate?: string
+}
+
+export interface Decision {
+  id: string
+  text: string
+  ts: string
+  updatedAt: string
+  tags?: string[]
+  outcome?: 'made' | 'deferred' | 'reversed'
+  linkedTaskId?: string
+  context?: string
+}
+
+export interface Brief {
+  jarvis: string
+  billy: string
+  generatedAt?: string
+  isStale?: boolean
+  isDemo?: boolean
+  briefId?: string
+  model?: string
+  promptVersion?: string
+}
+
+export type ThreadTag = 'DEAL' | 'INT' | 'INFO' | 'INDUSTRY' | 'NONE'
+export type ThreadPriority = 'HOT' | 'MED' | 'LOW'
+
+export interface InboxThread {
+  id: string
+  subject: string
+  from: string
+  fromDomain: string
+  snippet: string
+  unread: boolean
+  receivedAt: string
+  tag: ThreadTag
+  priority: ThreadPriority
+  labels?: string[]
+}
+
+export interface MeetingEvent {
+  id: string
+  title: string
+  start: string
+  end: string
+  attendees: string[]
+  isRequired: boolean
+  location?: string
+  description?: string
+  meetLink?: string
+}
+
+export type NotionBlockType =
+  | 'paragraph'
+  | 'heading_1'
+  | 'heading_2'
+  | 'heading_3'
+  | 'bulleted_list_item'
+  | 'numbered_list_item'
+  | 'toggle'
+  | 'divider'
+  | 'image'
+  | 'embed'
+
+export type ToneDot = 'hot' | 'active' | 'cool'
+
+export interface NotionBlock {
+  id: string
+  type: NotionBlockType
+  text: string
+  url?: string
+  toneDot?: ToneDot
+  children?: NotionBlock[]
+}
+
+export type SkillId =
+  | 'lemon-coverage'
+  | 'logline-extractor'
+  | 'treatment-writer'
+  | 'budget-sanity'
+  | 'casting-brief'
+  | 'deck-polish'
+  | 'email-reply-draft'
+  | 'meeting-prep'
+  | 'contract-review'
+  | 'press-kit'
+  | 'festival-strategy'
+  | 'pitch-coach'
+  | 'distributor-tracker'
+  | 'co-prod-finder'
+  | 'brand-brief'
+  | 'social-copy'
+  | 'ai-billy-voice'
+  | 'quick-tasks'
+  | 'daily-priorities'
+  | 'decision-coach'
+  | 'mood-board-prompt'
+  | 'location-scout'
+  | 'talent-profile'
+  | 'script-notes'
+  | 'interview-questions'
+  | 'brand-strategy'
+  | 'film-bible'
+
+export type SkillCategory = 'creative' | 'production' | 'business' | 'comms' | 'strategy'
+
+export interface Skill {
+  id: SkillId
+  title: string
+  description: string
+  category: SkillCategory
+  icon?: string
+}
+
+export interface SeedsData {
+  isDemo: true
+  tasks: Task[]
+  decisions: Decision[]
+  brief: Pick<Brief, 'jarvis' | 'billy'>
+  threads: InboxThread[]
+  meetings: MeetingEvent[]
+  notionBlocks: NotionBlock[]
+  spark: string
+}
+
+export type ActiveContextKind = 'thread' | 'task' | 'decision' | 'spark' | null
+
+export interface ActiveContext {
+  kind: ActiveContextKind
+  id: string | null
+}
