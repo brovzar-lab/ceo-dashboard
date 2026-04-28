@@ -9,6 +9,7 @@ export function Header() {
   const fetchCalendar = useCalendarStore((s) => s.fetch)
   const fetchBrain = useBrainStore((s) => s.fetch)
   const refreshBrief = useBriefStore((s) => s.refresh)
+  const isStreaming = useBriefStore((s) => s.isStreaming)
 
   const syncAll = () => {
     fetchInbox()
@@ -25,11 +26,14 @@ export function Header() {
       <div className="flex items-center gap-3">
         <SyncingPill />
         <button
+          type="button"
           onClick={syncAll}
-          className="text-xs font-body font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-md border border-border-soft hover:border-border-medium"
+          disabled={isStreaming}
+          className="text-xs font-body font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-md border border-border-soft hover:border-border-medium disabled:opacity-40"
         >
           Sync All
         </button>
+        {/* Logout is GET-only — no CSRF token required for this route */}
         <a
           href="/auth/google/logout"
           className="text-xs font-body text-text-muted hover:text-text-tertiary transition-colors"
