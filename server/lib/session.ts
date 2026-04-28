@@ -1,4 +1,4 @@
-import expressSession from 'express-session'
+import expressSession = require('express-session')
 import { db } from './firebase'
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000

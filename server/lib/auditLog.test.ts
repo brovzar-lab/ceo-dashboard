@@ -11,7 +11,9 @@ vi.mock('firebase-admin/firestore', () => ({
 import { writeAuditLog } from './auditLog'
 
 describe('writeAuditLog', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   test('writes event with correct fields', async () => {
     await writeAuditLog('uid1', 'login', '1.2.3.4', 'Mozilla/5.0')

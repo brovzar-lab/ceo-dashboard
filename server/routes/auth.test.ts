@@ -86,7 +86,7 @@ describe('GET /auth/google/start', () => {
 
   test('sets state cookie', async () => {
     const res = await request(makeApp()).get('/auth/google/start')
-    const setCookie = res.headers['set-cookie'] as string[]
+    const setCookie = res.headers['set-cookie'] as unknown as string[]
     expect(setCookie?.some((c: string) => c.includes('state'))).toBe(true)
   })
 })
