@@ -1,27 +1,7 @@
-import type { ThreadTag, ThreadPriority } from '@shared/types'
+import type { ThreadTag, ThreadPriority, TagPatterns } from '@shared/types'
 
-export interface TagPatterns {
-  DEAL: { domains: string[]; senders: string[] }
-  INT: { domains: string[] }
-  INFO: { domains: string[]; subjectIncludes: string[] }
-  INDUSTRY: { domains: string[]; senders: string[] }
-}
-
-export const DEFAULT_TAG_PATTERNS: TagPatterns = {
-  DEAL: {
-    domains: ['creel.mx', 'magneticlabs.com', 'apple.com', 'netflix.com', 'andersen.com', 'llh.com.mx', 'gbm.com', 'morenafilms.com', 'onzafilms.com'],
-    senders: ['mirna alvarado', 'tyler gould', 'alex ferrando', 'mauricio llanes', 'pilar benito', 'santiago de la rica', 'rene cardona', 'bernardo gomez', 'lebrija'],
-  },
-  INT: { domains: ['lemonfilms.com'] },
-  INFO: {
-    domains: ['theblacklist.com', 'anthropic.com'],
-    subjectIncludes: ['payment', 'receipt', 'newsletter', 'digest', 'your order'],
-  },
-  INDUSTRY: {
-    domains: ['canacine.org.mx', 'imcine.gob.mx', 'focine.gob.mx', 'sofiasalud.com'],
-    senders: ['uriel de la cruz'],
-  },
-}
+export type { TagPatterns } from '@shared/types'
+export { DEFAULT_TAG_PATTERNS } from '@shared/tagPatterns'
 
 const MED_ACTION_VERBS = ['review', 'approve', 'decide', 'needs', 'deadline']
 const HOT_OVERRIDE_RE = /\b(today|tomorrow|EOD|COB)\b/i

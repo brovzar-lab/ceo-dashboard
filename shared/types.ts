@@ -147,3 +147,10 @@ export interface ActiveContext {
   kind: ActiveContextKind
   id: string | null
 }
+
+export interface TagPatterns {
+  DEAL: { domains: string[]; senders: string[] }
+  INT: { domains: string[] }
+  INFO: { domains: string[]; subjectIncludes: string[] }
+  INDUSTRY: { domains: string[]; senders: string[] }
+}
