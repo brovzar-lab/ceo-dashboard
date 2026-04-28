@@ -5,6 +5,7 @@ export function BriefPanel() {
 
   return (
     <section
+      aria-label="Morning Brief"
       className="mt-4 p-5 bg-bg-surface border border-border-soft rounded-xl"
       style={{ transition: 'opacity 200ms ease-in-out', opacity: isStreaming ? 0.8 : 1 }}
     >
@@ -26,7 +27,6 @@ export function BriefPanel() {
         <p
           data-testid="brief-jarvis"
           className="font-display text-[19px] leading-relaxed text-text-primary"
-          style={{ fontSize: '19px' }}
         >
           {jarvis}
         </p>
@@ -34,7 +34,6 @@ export function BriefPanel() {
           <p
             data-testid="brief-billy"
             className="font-body text-[15px] leading-relaxed text-text-secondary"
-            style={{ fontSize: '15px' }}
           >
             {billy}
           </p>
