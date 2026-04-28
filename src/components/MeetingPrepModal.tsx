@@ -11,11 +11,29 @@ export function MeetingPrepModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60" onClick={closeModal} />
-      <div className="relative w-full max-w-lg bg-bg-elevated border border-border-medium rounded-2xl p-6 shadow-2xl">
+      <button
+        type="button"
+        aria-label="Close meeting prep modal"
+        className="absolute inset-0 bg-black/60 cursor-default"
+        onClick={closeModal}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="meeting-prep-title"
+        className="relative w-full max-w-lg bg-bg-elevated border border-border-medium rounded-2xl p-6 shadow-2xl"
+      >
         <div className="flex items-center justify-between mb-5">
-          <h2 className="font-display text-lg text-text-primary">Today's Required Meetings</h2>
-          <button type="button" onClick={closeModal} className="text-text-muted hover:text-text-secondary transition-colors text-xl leading-none">
+          <h2 id="meeting-prep-title" className="font-display text-lg text-text-primary">
+            Today's Required Meetings
+          </h2>
+          <button
+            type="button"
+            aria-label="Close"
+            autoFocus
+            onClick={closeModal}
+            className="text-text-muted hover:text-text-secondary transition-colors text-xl leading-none"
+          >
             ×
           </button>
         </div>
