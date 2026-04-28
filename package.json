@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"vite\" \"tsx watch server/index.ts\"",
     "build": "vite build && tsc -p server/tsconfig.json",
-    "start": "node server/dist/index.js",
+    "start": "node server/dist/server/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit && tsc -p server/tsconfig.json --noEmit"
