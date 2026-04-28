@@ -34,7 +34,7 @@ gmailRouter.get('/threads', gmailLimit, async (req, res) => {
         const msgs = full.data.messages ?? []
         if (!msgs.length) continue
         const first = msgs[msgs.length - 1]
-        const headers = first.payload?.headers ?? []
+        const headers = (first.payload?.headers ?? []) as { name: string; value: string }[]
         const from = extractHeader(headers, 'From')
         const subject = extractHeader(headers, 'Subject')
         const date = extractHeader(headers, 'Date')

@@ -5,6 +5,11 @@ import cookieParser from 'cookie-parser'
 import session = require('express-session')
 import { FirestoreSessionStore } from './lib/session'
 import { authRouter } from './routes/auth'
+import { claudeRouter } from './routes/claude'
+import { gmailRouter } from './routes/gmail'
+import { calendarRouter } from './routes/calendar'
+import { notionRouter } from './routes/notion'
+import { requireAuth } from './middleware/requireAuth'
 
 dotenv.config()
 
@@ -35,7 +40,19 @@ app.get('/health', (_req, res) => {
   res.json({ ok: true })
 })
 
+app.get('/api/csrf', (req, res) => {
+  res.json({ data: { token: req.sessionID } })
+})
+
+app.get('/api/me', requireAuth, (req, res) => {
+  res.json({ data: { uid: req.session.uid, email: req.session.email } })
+})
+
 app.use('/auth', authRouter)
+app.use('/api/claude', claudeRouter)
+app.use('/api/gmail', gmailRouter)
+app.use('/api/calendar', calendarRouter)
+app.use('/api/notion', notionRouter)
 
 if (isProd) {
   const distPath = path.resolve(__dirname, '../dist')
