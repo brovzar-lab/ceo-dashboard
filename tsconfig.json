@@ -16,7 +16,8 @@
     "paths": {
       "@/*": ["src/*"],
       "@shared/*": ["shared/*"]
-    }
+    },
+    "types": ["vitest/globals"]
   },
   "include": ["src", "shared"],
   "exclude": ["node_modules", "server"]
