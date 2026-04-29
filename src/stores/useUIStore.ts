@@ -8,6 +8,7 @@ interface UIState {
   activeModal: ModalKind
   skillLauncherOpen: boolean
   activeContext: ActiveContext
+  selectedSkillId: string | null
   openDrawer: () => void
   closeDrawer: () => void
   openModal: (modal: ModalKind) => void
@@ -16,6 +17,7 @@ interface UIState {
   closeSkillLauncher: () => void
   setActiveContext: (ctx: ActiveContext) => void
   clearActiveContext: () => void
+  setSelectedSkillId: (id: string | null) => void
 }
 
 export const useUIStore = create<UIState>()((set) => ({
@@ -23,13 +25,15 @@ export const useUIStore = create<UIState>()((set) => ({
   activeModal: null,
   skillLauncherOpen: false,
   activeContext: { kind: null, id: null },
+  selectedSkillId: null,
 
   openDrawer: () => set({ drawerOpen: true }),
   closeDrawer: () => set({ drawerOpen: false, activeContext: { kind: null, id: null } }),
   openModal: (modal) => set({ activeModal: modal }),
-  closeModal: () => set({ activeModal: null }),
+  closeModal: () => set({ activeModal: null, selectedSkillId: null }),
   openSkillLauncher: () => set({ skillLauncherOpen: true }),
   closeSkillLauncher: () => set({ skillLauncherOpen: false }),
   setActiveContext: (ctx) => set({ activeContext: ctx }),
   clearActiveContext: () => set({ activeContext: { kind: null, id: null } }),
+  setSelectedSkillId: (id) => set({ selectedSkillId: id }),
 }))

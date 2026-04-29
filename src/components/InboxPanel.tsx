@@ -5,9 +5,10 @@ import type { InboxThread } from '@shared/types'
 
 interface InboxPanelProps {
   onReply?: (thread: InboxThread) => void
+  onCreateTask?: (thread: InboxThread) => void
 }
 
-export function InboxPanel({ onReply }: InboxPanelProps) {
+export function InboxPanel({ onReply, onCreateTask }: InboxPanelProps) {
   const { threads, triageMode, enterTriage, loading } = useInboxStore()
 
   return (
@@ -24,11 +25,10 @@ export function InboxPanel({ onReply }: InboxPanelProps) {
             <div className="w-4 h-4 rounded-full border-2 border-accent-lemon border-t-transparent animate-spin" />
           </div>
         ) : (
-          <ThreadList threads={threads} onReply={onReply} />
+          <ThreadList threads={threads} onReply={onReply} onCreateTask={onCreateTask} />
         )}
       </div>
       {triageMode && <TriageMode />}
     </>
   )
 }
-

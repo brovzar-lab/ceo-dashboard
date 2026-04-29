@@ -4,7 +4,7 @@ import { SKILLS } from '@/data/skills'
 import type { Skill } from '@shared/types'
 
 export function SkillLauncher() {
-  const { skillLauncherOpen, openSkillLauncher, closeSkillLauncher, openModal, setActiveContext, activeContext } = useUIStore()
+  const { skillLauncherOpen, openSkillLauncher, closeSkillLauncher, openModal, setActiveContext, activeContext, setSelectedSkillId } = useUIStore()
   const [search, setSearch] = useState('')
 
   const filtered = SKILLS.filter(
@@ -14,7 +14,8 @@ export function SkillLauncher() {
       s.description.toLowerCase().includes(search.toLowerCase()),
   )
 
-  const launchSkill = (_skill: Skill) => {
+  const launchSkill = (skill: Skill) => {
+    setSelectedSkillId(skill.id)
     setActiveContext({ kind: activeContext.kind, id: activeContext.id })
     openModal('skill')
     closeSkillLauncher()

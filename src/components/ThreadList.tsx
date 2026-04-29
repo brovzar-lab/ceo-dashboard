@@ -11,9 +11,10 @@ const PRIORITY_DOT: Record<ThreadPriority, string> = {
 interface Props {
   threads: InboxThread[]
   onReply?: (thread: InboxThread) => void
+  onCreateTask?: (thread: InboxThread) => void
 }
 
-export function ThreadList({ threads, onReply }: Props) {
+export function ThreadList({ threads, onReply, onCreateTask }: Props) {
   const setActiveThread = useInboxStore((s) => s.setActiveThread)
   const setActiveContext = useUIStore((s) => s.setActiveContext)
   const openDrawer = useUIStore((s) => s.openDrawer)
@@ -51,18 +52,29 @@ export function ThreadList({ threads, onReply }: Props) {
               <p className="text-[11px] font-body text-text-muted truncate mt-0.5">{thread.snippet}</p>
             </div>
           </button>
-          {onReply && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); onReply(thread) }}
-              className="opacity-0 group-hover:opacity-100 text-[10px] font-body font-medium text-accent-lemon hover:text-text-primary transition-all px-2 py-1 rounded border border-border-soft mt-1 flex-shrink-0"
-            >
-              Reply
-            </button>
-          )}
+          <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 mt-1 flex-shrink-0 transition-all">
+            {onCreateTask && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onCreateTask(thread) }}
+                className="text-[10px] font-body font-medium text-accent-sage hover:text-text-primary px-2 py-1 rounded border border-border-soft"
+                title="Create task from this email"
+              >
+                → Task
+              </button>
+            )}
+            {onReply && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onReply(thread) }}
+                className="text-[10px] font-body font-medium text-accent-lemon hover:text-text-primary px-2 py-1 rounded border border-border-soft"
+              >
+                Reply
+              </button>
+            )}
+          </div>
         </div>
       ))}
     </div>
   )
 }
-

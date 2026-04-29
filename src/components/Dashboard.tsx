@@ -7,6 +7,7 @@ import { useSparkStore } from '@/stores/useSparkStore'
 import { useBriefStore } from '@/stores/useBriefStore'
 import { useTaskStore } from '@/stores/useTaskStore'
 import { useDecisionStore } from '@/stores/useDecisionStore'
+import type { Bucket } from '@shared/types'
 import { loadVoiceProfile, DEFAULT_VOICE_PROFILE } from '@/lib/voiceProfile'
 import type { VoiceProfile } from '@/lib/voiceProfile'
 import type { InboxThread } from '@shared/types'
@@ -39,7 +40,7 @@ export function Dashboard() {
   // Voice profile state
   const [voiceProfile, setVoiceProfile] = useState<VoiceProfile>(DEFAULT_VOICE_PROFILE)
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [replyEmail, setReplyEmail] = useState<{ from: string; fromEmail: string; subject: string; snippet: string } | null>(null)
+  const [replyEmail, setReplyEmail] = useState<{ threadId: string; from: string; fromEmail: string; subject: string; snippet: string } | null>(null)
 
   useEffect(() => {
     if (!isAuthenticated || !user) return
@@ -65,10 +66,23 @@ export function Dashboard() {
 
   const handleReply = (thread: InboxThread) => {
     setReplyEmail({
+      threadId: thread.id,
       from: thread.from,
       fromEmail: `${thread.from.toLowerCase().replace(/\s/g, '.')}@${thread.fromDomain}`,
       subject: thread.subject,
       snippet: thread.snippet,
+    })
+  }
+
+  const createTask = useTaskStore((s) => s.create)
+  const handleCreateTask = (thread: InboxThread) => {
+    if (!user) return
+    const bucketMap: Record<string, Bucket> = { HOT: 'now', MED: 'orbit', LOW: 'icebox' }
+    createTask(user.uid, {
+      title: thread.subject,
+      bucket: bucketMap[thread.priority] || 'orbit',
+      source: 'email',
+      notes: `From: ${thread.from}\nThread: ${thread.id}`,
     })
   }
 
@@ -81,7 +95,7 @@ export function Dashboard() {
         <NextUpBar />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
           <TasksPanel />
-          <InboxPanel onReply={handleReply} />
+          <InboxPanel onReply={handleReply} onCreateTask={handleCreateTask} />
           <BrainPanel />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">

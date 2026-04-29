@@ -3,6 +3,7 @@ import { TONE_TIERS } from '../lib/voiceProfile'
 import type { ToneTier } from '../lib/voiceProfile'
 
 interface EmailContext {
+  threadId?: string
   from: string
   fromEmail: string
   subject: string
@@ -19,11 +20,16 @@ export default function ReplyModal({ email, onClose }: Props) {
   const [tier, setTier] = useState<ToneTier>('peer')
   const [draft, setDraft] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sending, setSending] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [sent, setSent] = useState(false)
+  const [sendError, setSendError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!email) return
     setTier((email.toneTier as ToneTier) ?? 'peer')
+    setSent(false)
+    setSendError(null)
   }, [email])
 
   useEffect(() => {
@@ -35,6 +41,8 @@ export default function ReplyModal({ email, onClose }: Props) {
     if (!email) return
     setLoading(true)
     setDraft('')
+    setSent(false)
+    setSendError(null)
 
     try {
       const csrfRes = await fetch('/api/csrf', { credentials: 'include' })
@@ -101,6 +109,37 @@ export default function ReplyModal({ email, onClose }: Props) {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  async function send() {
+    if (!email || !draft) return
+    setSending(true)
+    setSendError(null)
+    try {
+      const res = await fetch('/api/gmail/send', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          threadId: email.threadId || '',
+          to: email.fromEmail,
+          subject: `Re: ${email.subject}`,
+          body: draft,
+        }),
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body?.error?.message || 'Send failed')
+      }
+      setSent(true)
+      setTimeout(() => {
+        onClose()
+        setSent(false)
+      }, 1500)
+    } catch (err: any) {
+      setSendError(err.message || 'Send failed')
+    }
+    setSending(false)
+  }
+
   if (!email) return null
 
   return (
@@ -152,15 +191,27 @@ export default function ReplyModal({ email, onClose }: Props) {
           )}
         </div>
 
+        {/* Send error */}
+        {sendError && (
+          <div className="settings-error" style={{ margin: '0 20px 12px' }}>{sendError}</div>
+        )}
+
         {/* Actions */}
         <div className="modal-actions">
-          <button onClick={() => generate(tier)} disabled={loading} className="reply-redraft-btn">
+          <button onClick={() => generate(tier)} disabled={loading || sending} className="reply-redraft-btn">
             Re-draft
           </button>
           <div className="modal-actions-right">
-            <button onClick={onClose} className="btn-secondary">Cancel</button>
-            <button onClick={copy} disabled={loading || !draft} className="btn-primary">
+            <button onClick={copy} disabled={loading || !draft} className="btn-secondary">
               {copied ? '✓ Copied' : 'Copy'}
+            </button>
+            <button
+              onClick={send}
+              disabled={loading || sending || !draft || sent}
+              className="btn-primary"
+              style={sent ? { background: '#059669' } : {}}
+            >
+              {sent ? '✓ Sent!' : sending ? 'Sending...' : 'Send'}
             </button>
           </div>
         </div>
