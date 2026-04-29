@@ -1,7 +1,11 @@
+if (process.env.NODE_ENV === 'production') require('module-alias/register')
+import 'dotenv/config'
 import express from 'express'
 import path from 'path'
-import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
+import helmet from 'helmet'
+import cors from 'cors'
+import morgan from 'morgan'
 import session = require('express-session')
 import { FirestoreSessionStore } from './lib/session'
 import { authRouter } from './routes/auth'
@@ -9,16 +13,23 @@ import { claudeRouter } from './routes/claude'
 import { gmailRouter } from './routes/gmail'
 import { calendarRouter } from './routes/calendar'
 import { notionRouter } from './routes/notion'
+import { voiceRouter } from './routes/voice'
+import { draftReplyRouter } from './routes/draftReply'
 import { requireAuth } from './middleware/requireAuth'
-
-dotenv.config()
 
 export const app = express()
 
+const isProd = process.env.NODE_ENV === 'production'
+
+// Security & logging
+app.use(helmet({ contentSecurityPolicy: isProd ? undefined : false }))
+app.use(morgan(isProd ? 'combined' : 'dev'))
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGIN || 'http://localhost:5173',
+  credentials: true,
+}))
 app.use(express.json())
 app.use(cookieParser())
-
-const isProd = process.env.NODE_ENV === 'production'
 app.use(
   session({
     name: isProd ? '__Host-sid' : 'sid',
@@ -53,9 +64,13 @@ app.use('/api/claude', claudeRouter)
 app.use('/api/gmail', gmailRouter)
 app.use('/api/calendar', calendarRouter)
 app.use('/api/notion', notionRouter)
+app.use('/api/voice-profile', voiceRouter)
+app.use('/api/claude/draft-reply', draftReplyRouter)
 
 if (isProd) {
-  const distPath = path.resolve(__dirname, '../dist')
+  // Compiled server runs from server/dist/server/index.js
+  // Vite output is at project_root/dist/
+  const distPath = path.resolve(__dirname, '../../../dist')
   app.use(express.static(distPath))
   app.get('*', (_req, res) => {
     res.sendFile(path.join(distPath, 'index.html'))

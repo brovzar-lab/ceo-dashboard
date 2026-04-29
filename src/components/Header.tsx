@@ -4,7 +4,11 @@ import { useBrainStore } from '@/stores/useBrainStore'
 import { useBriefStore } from '@/stores/useBriefStore'
 import { SyncingPill } from './SyncingPill'
 
-export function Header() {
+interface HeaderProps {
+  onOpenSettings?: () => void
+}
+
+export function Header({ onOpenSettings }: HeaderProps) {
   const fetchInbox = useInboxStore((s) => s.fetch)
   const fetchCalendar = useCalendarStore((s) => s.fetch)
   const fetchBrain = useBrainStore((s) => s.fetch)
@@ -25,6 +29,16 @@ export function Header() {
       </span>
       <div className="flex items-center gap-3">
         <SyncingPill />
+        {onOpenSettings && (
+          <button
+            type="button"
+            onClick={onOpenSettings}
+            className="text-xs font-body text-text-muted hover:text-text-primary transition-colors px-2 py-1.5 rounded-md border border-border-soft hover:border-border-medium"
+            title="Settings"
+          >
+            ⚙
+          </button>
+        )}
         <button
           type="button"
           onClick={syncAll}
@@ -44,3 +58,4 @@ export function Header() {
     </header>
   )
 }
+

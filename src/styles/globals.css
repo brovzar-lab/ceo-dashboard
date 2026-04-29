@@ -28,3 +28,195 @@
     border-radius: 2px;
   }
 }
+
+@layer components {
+  /* Modal system */
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-16 px-4;
+    backdrop-filter: blur(4px);
+  }
+  .modal-content {
+    @apply bg-bg-surface border border-border-soft rounded-xl shadow-2xl w-full max-h-[85vh] flex flex-col overflow-hidden;
+  }
+  .modal-header {
+    @apply flex items-center justify-between px-5 pt-5 pb-3 border-b border-border-soft;
+  }
+  .modal-title {
+    @apply text-sm font-body font-semibold text-text-primary;
+  }
+  .modal-close {
+    @apply text-text-muted hover:text-text-primary text-lg leading-none transition-colors;
+  }
+  .modal-actions {
+    @apply flex items-center justify-between gap-2 px-5 py-4 border-t border-border-soft;
+  }
+  .modal-actions-right {
+    @apply flex gap-2;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply text-xs font-body font-medium px-4 py-2 rounded-lg bg-accent-lemon text-bg-base hover:brightness-110 disabled:opacity-40 transition-all;
+  }
+  .btn-secondary {
+    @apply text-xs font-body font-medium px-3 py-1.5 rounded-lg border border-border-soft text-text-secondary hover:bg-bg-elevated transition-colors;
+  }
+
+  /* Reply modal */
+  .reply-modal {
+    @apply max-w-lg;
+  }
+  .reply-context {
+    @apply bg-bg-elevated rounded-lg p-3 mx-5 mt-4;
+  }
+  .reply-subject {
+    @apply text-xs font-body font-medium text-text-primary truncate mb-1;
+  }
+  .reply-snippet {
+    @apply text-[11px] font-body text-text-muted line-clamp-2 leading-relaxed;
+  }
+  .tone-switcher {
+    @apply flex items-center gap-2 flex-wrap px-5 py-3;
+  }
+  .tone-label {
+    @apply text-[10px] font-body font-semibold uppercase tracking-wider text-text-muted;
+  }
+  .tone-btn {
+    @apply text-[10px] font-body font-medium px-2.5 py-1 rounded-md transition-colors bg-bg-elevated text-text-secondary hover:bg-border-soft;
+  }
+  .tone-btn.active {
+    @apply text-white;
+  }
+  .reply-draft-area {
+    @apply px-5 pb-4;
+  }
+  .reply-loading {
+    @apply flex items-center justify-center py-10 text-sm text-text-muted gap-2;
+  }
+  .reply-textarea {
+    @apply w-full p-3 text-sm font-body border border-border-soft rounded-lg bg-bg-elevated text-text-primary focus:outline-none focus:border-accent-lemon/50 resize-none leading-relaxed;
+  }
+  .reply-redraft-btn {
+    @apply text-[11px] font-body text-text-muted hover:text-text-primary transition-colors disabled:opacity-40;
+  }
+
+  /* Settings modal */
+  .settings-modal {
+    @apply max-w-lg;
+  }
+  .settings-section {
+    @apply px-5 py-4 space-y-4;
+  }
+  .settings-section-header {
+    @apply flex items-start justify-between gap-3;
+  }
+  .settings-section-title {
+    @apply text-xs font-body font-semibold text-text-primary;
+  }
+  .settings-section-desc {
+    @apply text-[10px] font-body text-text-muted mt-0.5;
+  }
+  .settings-badge {
+    @apply text-[10px] font-body font-medium px-2 py-0.5 rounded-full border whitespace-nowrap;
+  }
+  .settings-badge.active {
+    @apply bg-emerald-950/30 text-emerald-400 border-emerald-800;
+  }
+  .settings-badge.defaults {
+    @apply bg-amber-950/30 text-amber-400 border-amber-800;
+  }
+  .settings-voice-summary {
+    @apply text-xs font-body text-text-secondary leading-relaxed bg-bg-elevated rounded-lg p-3;
+  }
+  .settings-tones {
+    @apply space-y-2;
+  }
+  .settings-tones-label {
+    @apply text-[10px] font-body font-semibold uppercase tracking-wider text-text-muted mb-2;
+  }
+  .settings-tone-row {
+    @apply flex gap-3;
+  }
+  .settings-tone-name {
+    @apply text-[10px] font-body font-bold uppercase tracking-wider w-14 flex-shrink-0;
+  }
+  .settings-tone-desc {
+    @apply text-[11px] font-body text-text-secondary leading-snug;
+  }
+  .settings-train {
+    @apply space-y-2;
+  }
+  .settings-train-btn {
+    @apply w-full text-xs font-body font-medium py-2.5 rounded-lg border border-border-soft text-text-secondary hover:bg-bg-elevated disabled:opacity-50 flex items-center justify-center gap-2 transition-colors;
+  }
+  .settings-train-note {
+    @apply text-[10px] font-body text-text-muted text-center;
+  }
+  .settings-error {
+    @apply text-[11px] font-body text-red-400 bg-red-950/30 border border-red-900 px-3 py-2 rounded;
+  }
+
+  /* Voice diff */
+  .voice-diff {
+    @apply space-y-4;
+  }
+  .voice-diff-header {
+    @apply flex items-center justify-between;
+  }
+  .voice-diff-count {
+    @apply text-xs font-body text-text-muted;
+  }
+  .voice-diff-approve-all {
+    @apply text-[10px] font-body font-medium text-text-secondary hover:text-text-primary underline;
+  }
+  .voice-diff-fields {
+    @apply space-y-3;
+  }
+  .voice-diff-card {
+    @apply rounded-lg border p-3 transition-colors;
+  }
+  .voice-diff-card.approved {
+    @apply border-border-soft bg-bg-elevated;
+  }
+  .voice-diff-card.skipped {
+    @apply border-border-soft/50 bg-bg-base opacity-60;
+  }
+  .voice-diff-card-header {
+    @apply flex items-center justify-between gap-2 mb-2;
+  }
+  .voice-diff-label {
+    @apply text-[10px] font-body font-semibold uppercase tracking-wider text-text-muted;
+  }
+  .voice-diff-toggle {
+    @apply text-[10px] font-body font-medium px-2 py-0.5 rounded-full border transition-colors;
+  }
+  .voice-diff-toggle.is-approved {
+    @apply border-emerald-800 bg-emerald-950/30 text-emerald-400;
+  }
+  .voice-diff-old {
+    @apply text-[11px] font-body text-text-muted line-clamp-2 mb-1;
+  }
+  .voice-diff-new {
+    @apply text-[11px] font-body text-text-primary font-medium leading-relaxed;
+  }
+  .voice-diff-actions {
+    @apply flex items-center justify-between pt-3 border-t border-border-soft;
+  }
+  .voice-diff-cancel {
+    @apply text-xs font-body text-text-muted hover:text-text-primary;
+  }
+  .voice-diff-commit {
+    @apply text-xs font-body font-medium px-4 py-2 rounded-lg bg-accent-lemon text-bg-base hover:brightness-110;
+  }
+  .voice-diff-empty {
+    @apply text-xs font-body text-text-muted bg-bg-elevated rounded-lg p-3 space-y-2;
+  }
+  .voice-diff-close-btn {
+    @apply text-xs font-body text-text-muted hover:text-text-primary;
+  }
+
+  /* Spinner */
+  .spinner {
+    @apply w-4 h-4 rounded-full border-2 border-accent-lemon border-t-transparent animate-spin;
+  }
+}

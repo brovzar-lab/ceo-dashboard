@@ -32,7 +32,7 @@ const STATE_COOKIE = isProd ? '__Host-state' : 'state'
 const STATE_COOKIE_OPTS = {
   httpOnly: true,
   secure: isProd,
-  sameSite: 'strict' as const,
+  sameSite: 'lax' as const,
   maxAge: 10 * 60 * 1000,
   path: '/',
 }
@@ -45,6 +45,8 @@ authRouter.get('/google/start', (req, res) => {
     scope: SCOPES,
     state,
     prompt: 'consent',
+    login_hint: process.env.ALLOWED_EMAILS?.split(',')[0] || '',
+    hd: 'lemonfilms.com',
   })
   res.cookie(STATE_COOKIE, state, STATE_COOKIE_OPTS)
   res.redirect(url)

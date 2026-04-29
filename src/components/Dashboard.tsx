@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useInboxStore } from '@/stores/useInboxStore'
 import { useCalendarStore } from '@/stores/useCalendarStore'
@@ -7,6 +7,9 @@ import { useSparkStore } from '@/stores/useSparkStore'
 import { useBriefStore } from '@/stores/useBriefStore'
 import { useTaskStore } from '@/stores/useTaskStore'
 import { useDecisionStore } from '@/stores/useDecisionStore'
+import { loadVoiceProfile, DEFAULT_VOICE_PROFILE } from '@/lib/voiceProfile'
+import type { VoiceProfile } from '@/lib/voiceProfile'
+import type { InboxThread } from '@shared/types'
 import { Header } from './Header'
 import { DemoBanner } from './DemoBanner'
 import { BriefPanel } from './BriefPanel'
@@ -20,6 +23,8 @@ import { SkillLauncher } from './SkillLauncher'
 import { BillyDrawer } from './BillyDrawer'
 import { MeetingPrepModal } from './MeetingPrepModal'
 import { SkillModal } from './SkillModal'
+import ReplyModal from './ReplyModal'
+import SettingsModal from './SettingsModal'
 
 export function Dashboard() {
   const { user, isAuthenticated } = useAuthStore()
@@ -30,6 +35,11 @@ export function Dashboard() {
   const fetchSpark = useSparkStore((s) => s.fetch)
   const subscribeToTasks = useTaskStore((s) => s.subscribe)
   const subscribeToDecisions = useDecisionStore((s) => s.subscribe)
+
+  // Voice profile state
+  const [voiceProfile, setVoiceProfile] = useState<VoiceProfile>(DEFAULT_VOICE_PROFILE)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [replyEmail, setReplyEmail] = useState<{ from: string; fromEmail: string; subject: string; snippet: string } | null>(null)
 
   useEffect(() => {
     if (!isAuthenticated || !user) return
@@ -43,6 +53,9 @@ export function Dashboard() {
     fetchBrain()
     fetchSpark()
 
+    // Load voice profile
+    loadVoiceProfile().then(setVoiceProfile)
+
     return () => {
       unsubTasks()
       unsubDecisions()
@@ -50,16 +63,25 @@ export function Dashboard() {
     }
   }, [isAuthenticated, user?.uid])
 
+  const handleReply = (thread: InboxThread) => {
+    setReplyEmail({
+      from: thread.from,
+      fromEmail: `${thread.from.toLowerCase().replace(/\s/g, '.')}@${thread.fromDomain}`,
+      subject: thread.subject,
+      snippet: thread.snippet,
+    })
+  }
+
   return (
     <div className="min-h-screen bg-bg-base text-text-primary font-body">
       <DemoBanner />
-      <Header />
+      <Header onOpenSettings={() => setSettingsOpen(true)} />
       <main className="max-w-[1440px] mx-auto px-4 pb-16">
         <BriefPanel />
         <NextUpBar />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
           <TasksPanel />
-          <InboxPanel />
+          <InboxPanel onReply={handleReply} />
           <BrainPanel />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
@@ -71,6 +93,14 @@ export function Dashboard() {
       <BillyDrawer />
       <MeetingPrepModal />
       <SkillModal />
+      <ReplyModal email={replyEmail} onClose={() => setReplyEmail(null)} />
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        voiceProfile={voiceProfile}
+        onProfileUpdate={setVoiceProfile}
+      />
     </div>
   )
 }
+
