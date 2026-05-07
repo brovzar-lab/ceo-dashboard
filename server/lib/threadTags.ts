@@ -28,14 +28,23 @@ const NOISE_DOMAINS = new Set([
 ])
 
 // Subject patterns that indicate noise
-const NOISE_SUBJECT_RE = /\b(unsubscribe|newsletter|subscription|renewal|your order|receipt|confirm(ation)?|welcome to|getting started|verify your|weekly digest|daily digest|top stories|flash sale|limited time|% off|coupon|promo code|shipped|delivery|track(ing)? (order|package)|out for delivery|arriving (today|tomorrow)|free shipping|buy now|shop now)\b/i
+const NOISE_SUBJECT_RE = /\b(unsubscribe|newsletter|subscription|renewal|your order|receipt|confirm(ation)?|welcome to|getting started|verify your|weekly digest|daily digest|daily agenda|daily email cleanup|top stories|flash sale|limited time|% off|coupon|promo code|shipped|delivery|track(ing)? (order|package)|out for delivery|arriving (today|tomorrow)|free shipping|buy now|shop now)\b/i
 
 /** Check if a thread is noise (newsletters, subscriptions, marketing) */
 export function isNoiseThread(domain: string, subject: string, from: string): boolean {
+  // Exact domain match
   if (NOISE_DOMAINS.has(domain)) return true
+  // Subdomain match — e.g. news.temumail.com → check if any noise domain is a suffix
+  for (const noiseDomain of NOISE_DOMAINS) {
+    if (domain.endsWith('.' + noiseDomain)) return true
+  }
+  // Brand-name catch-all for e-commerce variants (temumail.com, amazonses.com, etc.)
+  if (/temu|shein|aliexpress|wish\.com|groupon|wayfair|overstock/i.test(domain)) return true
   if (NOISE_SUBJECT_RE.test(subject)) return true
   // Catch common newsletter patterns in the from field
   if (/noreply|no-reply|newsletter|digest|notification|marketing|promo/i.test(from)) return true
+  // "reward" / "prize" / "gift card" in subject — always spam/promo
+  if (/\b(reward|prize|gift card|you won|congratulations|claim your)\b/i.test(subject)) return true
   return false
 }
 
