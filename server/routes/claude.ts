@@ -28,12 +28,12 @@ const MODEL_PROSE = 'claude-sonnet-4-6'
 const MODEL_CHAT = 'claude-sonnet-4-6'
 const MODEL_SPARK = 'claude-haiku-4-5-20251001'
 
-// Context budget caps (per plan: 12 threads × 200 chars + 8 events × 100 chars)
+// Context budget caps — generous snippets to prevent hallucination from data gaps
 const MAX_THREADS = 12
-const MAX_THREAD_SNIPPET_LEN = 200
+const MAX_THREAD_SNIPPET_LEN = 400
 const MAX_EVENTS = 8
-const MAX_EVENT_DESC_LEN = 100
-const MAX_CONTEXT_CHARS = 20_000
+const MAX_EVENT_DESC_LEN = 200
+const MAX_CONTEXT_CHARS = 30_000
 const MAX_VAULT_CHUNKS = 8
 
 function getAnthropicClient() {
@@ -199,8 +199,9 @@ function validateBriefJson(raw: string, contextIds: string[]): { ok: true; data:
     return { ok: false, reason: 'Invalid JSON' }
   }
 
-  if (!Array.isArray(parsed.overview) || parsed.overview.length !== 5) {
-    return { ok: false, reason: `overview must have exactly 5 items, got ${parsed.overview?.length ?? 'none'}` }
+  // Allow 2-5 overview items — only as many as the data supports
+  if (!Array.isArray(parsed.overview) || parsed.overview.length < 2 || parsed.overview.length > 5) {
+    return { ok: false, reason: `overview must have 2-5 items, got ${parsed.overview?.length ?? 'none'}` }
   }
 
   if (!parsed.oneThing?.text || !parsed.oneThing?.why) {
@@ -215,8 +216,8 @@ function validateBriefJson(raw: string, contextIds: string[]): { ok: true; data:
     }
   }
 
-  // Validate sourceIds exist in context or are 'inferred' or vault-prefixed
-  const validIds = new Set([...contextIds, 'inferred'])
+  // Validate sourceIds exist in context — NO 'inferred' allowed (anti-hallucination)
+  const validIds = new Set(contextIds)
   for (const claim of allClaims) {
     for (const cite of claim.citations) {
       if (!validIds.has(cite.sourceId) && !cite.sourceId?.startsWith('vault:')) {
