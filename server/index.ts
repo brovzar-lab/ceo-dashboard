@@ -12,7 +12,8 @@ import { authRouter } from './routes/auth'
 import { claudeRouter } from './routes/claude'
 import { gmailRouter } from './routes/gmail'
 import { calendarRouter } from './routes/calendar'
-import { notionRouter } from './routes/notion'
+// DEPRECATED: Notion data now flows through vault pipeline (Notion → extraction scripts → Obsidian Brain → Git → Railway)
+// import { notionRouter } from './routes/notion'
 import { voiceRouter } from './routes/voice'
 import { draftReplyRouter } from './routes/draftReply'
 import { capturesRouter } from './routes/captures'
@@ -87,7 +88,7 @@ app.use('/auth', authRouter)
 app.use('/api/claude', claudeRouter)
 app.use('/api/gmail', gmailRouter)
 app.use('/api/calendar', calendarRouter)
-app.use('/api/notion', notionRouter)
+// app.use('/api/notion', notionRouter)  // DEPRECATED — vault is the single source of truth
 app.use('/api/voice-profile', voiceRouter)
 app.use('/api/claude/draft-reply', draftReplyRouter)
 app.use('/api/captures', capturesRouter)
