@@ -60,5 +60,8 @@
   },
   "_moduleAliases": {
     "@shared": "server/dist/shared"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
