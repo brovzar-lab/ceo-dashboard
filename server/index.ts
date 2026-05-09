@@ -35,7 +35,38 @@ const isProd = process.env.NODE_ENV === 'production'
 app.set('trust proxy', 1)
 
 // Security & logging
-app.use(helmet({ contentSecurityPolicy: isProd ? undefined : false }))
+app.use(helmet({
+  contentSecurityPolicy: isProd
+    ? {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+          fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
+          connectSrc: [
+            "'self'",
+            // Firebase / Firestore client SDK
+            'https://firestore.googleapis.com',
+            'https://*.firebaseio.com',
+            'wss://*.firebaseio.com',
+            'https://firebase.googleapis.com',
+            'https://identitytoolkit.googleapis.com',
+            'https://securetoken.googleapis.com',
+            // Google APIs (OAuth, Gmail, Calendar)
+            'https://www.googleapis.com',
+            'https://oauth2.googleapis.com',
+            'https://accounts.google.com',
+            // Anthropic
+            'https://api.anthropic.com',
+          ],
+          frameSrc: ["'none'"],
+          objectSrc: ["'none'"],
+          baseUri: ["'self'"],
+        },
+      }
+    : false,
+}))
 app.use(morgan(isProd ? 'combined' : 'dev'))
 app.use(cors({
   origin: (origin, cb) => {
