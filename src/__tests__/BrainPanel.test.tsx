@@ -38,5 +38,5 @@ test('BrainPanel renders recent notes', () => {
 
 test('BrainPanel renders stats', () => {
   render(<BrainPanel />)
-  expect(screen.getByText(/5 notes/)).toBeInTheDocument()
+  expect(screen.getByText(/5 notes · 20 chunks indexed/)).toBeInTheDocument()
 })

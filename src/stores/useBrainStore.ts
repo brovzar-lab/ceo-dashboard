@@ -49,11 +49,12 @@ interface BrainState {
   fetchStatus: () => Promise<void>
   search: (query: string) => Promise<void>
   fetchRecent: () => Promise<void>
+  fetch: () => Promise<void>
   openNote: (path: string) => Promise<void>
   closeNote: () => void
 }
 
-export const useBrainStore = create<BrainState>((set) => ({
+export const useBrainStore = create<BrainState>((set, get) => ({
   stats: { ready: false, docCount: 0, chunkCount: 0, totalBytes: 0 },
   loading: false,
   searchLoading: false,
@@ -91,6 +92,10 @@ export const useBrainStore = create<BrainState>((set) => ({
     } catch (err) {
       set({ error: (err as Error).message, searchLoading: false })
     }
+  },
+
+  fetch: async () => {
+    await Promise.all([get().fetchStatus(), get().fetchRecent()])
   },
 
   fetchRecent: async () => {

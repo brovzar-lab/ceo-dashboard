@@ -68,7 +68,13 @@ function makeApp() {
   const app = express()
   app.use(express.json())
   app.use((req: any, _res, next) => {
-    req.session = { uid: undefined, email: undefined, cookie: {}, destroy: (cb: any) => cb?.() }
+    req.session = {
+      uid: undefined,
+      email: undefined,
+      cookie: {},
+      save: (cb: any) => cb?.(),
+      destroy: (cb: any) => cb?.(),
+    }
     req.sessionID = 'test-sid'
     req.cookies = {}
     next()
@@ -84,10 +90,9 @@ describe('GET /auth/google/start', () => {
     expect(res.headers.location).toContain('accounts.google.com')
   })
 
-  test('sets state cookie', async () => {
+  test('includes state in redirect URL', async () => {
     const res = await request(makeApp()).get('/auth/google/start')
-    const setCookie = res.headers['set-cookie'] as unknown as string[]
-    expect(setCookie?.some((c: string) => c.includes('state'))).toBe(true)
+    expect(res.headers.location).toContain('state=')
   })
 })
 
